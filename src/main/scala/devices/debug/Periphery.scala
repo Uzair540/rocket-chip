@@ -126,12 +126,11 @@ trait HasPeripheryDebugModuleImp extends LazyModuleImp {
 
   debug.foreach { debug =>
     debug.clockeddmi.foreach { 
-    val outerdebug = outer.debugOpt.get
-    dbg => outerdebug.module.io.dmi.get <> dbg }
+    dbg => outer.debugOpt.get.module.io.dmi.get <> dbg }
     (debug.apb
       zip outer.apbDebugNodeOpt
-      zip outerdebug.module.io.apb_clock
-      zip outerdebug.module.io.apb_reset).foreach {
+      zip outer.debugOpt.get.module.io.apb_clock
+      zip outer.debugOpt.get.module.io.apb_reset).foreach {
       case (((io, apb), c ), r) =>
         apb.out(0)._1 <> io
         c:= io.clock
@@ -146,7 +145,7 @@ trait HasPeripheryDebugModuleImp extends LazyModuleImp {
     debug.extTrigger.foreach { x => outerdebug.module.io.extTrigger.foreach {y => x <> y}}
 
     // TODO in inheriting traits: Set this to something meaningful, e.g. "component is in reset or powered down"
-    outerdebug.module.io.ctrl.debugUnavail.foreach { _ := false.B }
+    outer.debugOpt.get.module.io.ctrl.debugUnavail.foreach { _ := false.B }
   }
 
   val dtm = debug.flatMap(_.systemjtag.map(instantiateJtagDTM(_)))

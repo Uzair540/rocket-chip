@@ -137,13 +137,13 @@ trait HasPeripheryDebugModuleImp extends LazyModuleImp {
         c:= io.clock
         r:= io.reset
     }
-    outerdebug.module.io.debug_reset := debug.reset
-    outerdebug.module.io.debug_clock := debug.clock
+    outer.debugOpt.get.module.io.debug_reset := debug.reset
+    outer.debugOpt.get.module.io.debug_clock := debug.clock
 
-    debug.ndreset := outerdebug.module.io.ctrl.ndreset
-    debug.dmactive := outerdebug.module.io.ctrl.dmactive
-    outerdebug.module.io.ctrl.dmactiveAck := debug.dmactiveAck
-    debug.extTrigger.foreach { x => outerdebug.module.io.extTrigger.foreach {y => x <> y}}
+    debug.ndreset := outer.debugOpt.get.module.io.ctrl.ndreset
+    debug.dmactive := outer.debugOpt.get.module.io.ctrl.dmactive
+    outer.debugOpt.get.module.io.ctrl.dmactiveAck := debug.dmactiveAck
+    debug.extTrigger.foreach { x => outer.debugOpt.get.module.io.extTrigger.foreach {y => x <> y}}
 
     // TODO in inheriting traits: Set this to something meaningful, e.g. "component is in reset or powered down"
     outer.debugOpt.get.module.io.ctrl.debugUnavail.foreach { _ := false.B }
